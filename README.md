@@ -2,7 +2,7 @@
 
 # DB
 
-# user table
+## user table
 
     CREATE TABLE `user` (
     `usercode` INT(11) NOT NULL AUTO_INCREMENT,
@@ -19,7 +19,7 @@
     ENGINE=InnoDB;
     )
 
-# todos table
+## todos table
 
     CREATE TABLE `todos` (
     `todocode` INT(11) NOT NULL AUTO_INCREMENT,
