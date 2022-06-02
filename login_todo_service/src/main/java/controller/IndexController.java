@@ -13,6 +13,6 @@ public class IndexController extends HttpServlet{
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
-		request.getRequestDispatcher("/WEB-INF/views/Index.jsp").forward(request, resp);
+		request.getRequestDispatcher("/WEB-INF/views/Index.jsp").forward(request, resp); //url요청시 index로 보내기
 	}
 }

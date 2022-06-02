@@ -10,14 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import entity.User;
+import repository.UserDao;
 import repository.UserDaoImpl;
 
 
 @WebServlet("/update")
 public class UpdateController extends HttpServlet {
-	UserDaoImpl userDaoImpl = new UserDaoImpl();
+	private static final long serialVersionUID = 1L;
+	UserDao userDao = new UserDaoImpl();
 	
-//	@Override
+//	@Override ìƒˆë¡œê³ ì¹¨ í•˜ëŠ” ê²½ìš°?
 //	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //		HttpSession session = req.getSession();
 ////		User user = (User) session.getAttribute("user");
@@ -27,28 +29,28 @@ public class UpdateController extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
-		User currentUser = (User) session.getAttribute("user"); //session¿¡¼­ °¡Á®¿È
+		User currentUser = (User) session.getAttribute("user"); //sessionì— ì €ì¥ë˜ì–´ìˆëŠ” user ê°ì²´ 
 
 		String newName = req.getParameter("name");
 		String newEmail = req.getParameter("email");
 		String newPassword = req.getParameter("password");
 		
-		if(!newName.equals(currentUser.getName())) { //form¿¡¼­ ºó°ªµµ °¡Á®¿È1
+		if(!newName.equals(currentUser.getName())) { //ë¹ˆê°’ë„ ë„˜ì–´ì˜¤ë‹ˆ ì—¬ê¸°ì„œ ë¶„ë¥˜1
 			currentUser.setName(newName);
 		}
 		
-		if(!newEmail.equals(currentUser.getEmail())) { //form¿¡¼­ ºó°ªµµ °¡Á®¿È2
+		if(!newEmail.equals(currentUser.getEmail())) { //ë¹ˆê°’ë„ ë„˜ì–´ì˜¤ë‹ˆ ì—¬ê¸°ì„œ ë¶„ë¥˜2
 			currentUser.setEmail(newEmail);
 		}
 		
-		if(!newPassword.equals(currentUser.getPassword())) { //form¿¡¼­ ºó°ªµµ °¡Á®¿È3
+		if(!newPassword.equals(currentUser.getPassword())) { //ë¹ˆê°’ë„ ë„˜ì–´ì˜¤ë‹ˆ ì—¬ê¸°ì„œ ë¶„ë¥˜3
 			currentUser.setPassword(newPassword);
 		}
 		
-		userDaoImpl.updateProfile(currentUser); //db update
+		userDao.updateProfile(currentUser); //db update
 		
-		session.removeAttribute("user"); // Áö¿ì°í
-		session.setAttribute("user", currentUser); //session¿¡ Àçµî·Ï
+		session.removeAttribute("user"); // ê¸°ì¡´êº¼ ì§€ìš°ê³ 
+		session.setAttribute("user", currentUser); // ì¬ë“±ë¡
 		
 		req.getRequestDispatcher("/WEB-INF/logged-in.jsp").forward(req, resp); 
 	}

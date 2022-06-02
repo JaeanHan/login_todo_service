@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 
 import db.DBConnectionMgr;
 import entity.User;
@@ -192,6 +191,24 @@ public class UserDaoImpl implements UserDao {
 		return result;
 	}
 
+	@Override
+	public int checkValidEmail(String email) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
+	@Override
+	public int checkValidUsername(String username) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int createTempPassword(String username, String email) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
 
 }

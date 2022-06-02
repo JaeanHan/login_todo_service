@@ -11,11 +11,13 @@ import javax.servlet.http.HttpSession;
 
 @WebServlet("/sign-out")
 public class SignOutController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
 		
-		session.removeAttribute("user"); // session¿¡¼­ Á¦°Å
-		resp.sendRedirect("/login_todo_service/index"); // index·Î º¸³»±â
+		session.removeAttribute("user"); // sessionì—ì„œ ì €ì¥ëœ ìœ ì € ì œê±°í›„
+		resp.sendRedirect("/login_todo_service/index"); // indexë¡œ ë³´ë‚´ê¸°
 	}
 }

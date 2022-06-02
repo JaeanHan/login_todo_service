@@ -10,21 +10,24 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import entity.User;
+import repository.UserDao;
 import repository.UserDaoImpl;
 
 
 @WebServlet("/withdrawal")
 public class WithdrawalController extends HttpServlet {
-	UserDaoImpl userDaoImpl = new UserDaoImpl();
+	private static final long serialVersionUID = 1L;
+	UserDao userDao = new UserDaoImpl();
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
 		int result=0;
 		
-		result = userDaoImpl.deleteUserByUsername((User)session.getAttribute("user"));
+		result = userDao.deleteUserByUsername((User)session.getAttribute("user"));
 		
 		if(result == 1) {
-			resp.sendRedirect("/login_todo_service/index"); //≈ª≈ º∫∞¯«œ∏È index∑Œ ∫∏≥ª±‚
+			resp.sendRedirect("/login_todo_service/index"); //ÏÇ≠Ï†úÎêêÎã§Î©¥ indexÎ°ú Î≥¥ÎÇ¥Í∏∞
 		} else {
 			req.getRequestDispatcher("/WEB-INF/logged-in.jsp").forward(req, resp);
 		}

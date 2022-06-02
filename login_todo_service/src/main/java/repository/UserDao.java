@@ -9,5 +9,8 @@ public interface UserDao {
 //	public void SignOut();
 	public int updateProfile(User user);
 	public int deleteUserByUsername(User user);
+	public int checkValidEmail(String email);
+	public int checkValidUsername(String username);
+	public int createTempPassword(String username, String email);
 	
 }
