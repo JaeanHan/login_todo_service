@@ -20,7 +20,7 @@ public class SignUpController extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String name = "friend"; // 디자인 때문에 name을 못받아와서 임시로 부여, 인풋박스 4개는 안이쁨.
+		String name = "friend"; // 임시로 부여
 		String email = req.getParameter("email");
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");

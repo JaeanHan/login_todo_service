@@ -29,7 +29,7 @@ public class WithdrawalController extends HttpServlet {
 		if(result == 1) {
 			resp.sendRedirect("/login_todo_service/index"); //삭제됐다면 index로 보내기
 		} else {
-			req.getRequestDispatcher("/WEB-INF/logged-in.jsp").forward(req, resp);
+			req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp").forward(req, resp);
 		}
 	}
 }

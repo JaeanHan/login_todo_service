@@ -26,6 +26,7 @@ public class UpdateController extends HttpServlet {
 //		req.getRequestDispatcher("logged-in.jsp").forward(req, resp);
 //		
 //	}
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
@@ -35,15 +36,15 @@ public class UpdateController extends HttpServlet {
 		String newEmail = req.getParameter("email");
 		String newPassword = req.getParameter("password");
 		
-		if(!newName.equals(currentUser.getName())) { //빈값도 넘어오니 여기서 분류1
+		if(!newName.equals(currentUser.getName()) && !newName.equals("") ) {
 			currentUser.setName(newName);
 		}
 		
-		if(!newEmail.equals(currentUser.getEmail())) { //빈값도 넘어오니 여기서 분류2
+		if(!newEmail.equals(currentUser.getEmail()) && !newEmail.equals("")) {
 			currentUser.setEmail(newEmail);
 		}
 		
-		if(!newPassword.equals(currentUser.getPassword())) { //빈값도 넘어오니 여기서 분류3
+		if(!newPassword.equals(currentUser.getPassword()) && !newPassword.equals("")) {
 			currentUser.setPassword(newPassword);
 		}
 		
@@ -52,6 +53,6 @@ public class UpdateController extends HttpServlet {
 		session.removeAttribute("user"); // 기존꺼 지우고
 		session.setAttribute("user", currentUser); // 재등록
 		
-		req.getRequestDispatcher("/WEB-INF/logged-in.jsp").forward(req, resp); 
+		req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp").forward(req, resp); 
 	}
 }

@@ -5,12 +5,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-	<link rel="stylesheet" type="text/css" href="/login_todo_service/static/css/logged-in.css?ver=1">
+<link rel="stylesheet" href="/login_todo_service/static/css/logged-in.css?ver=1">
 </head>
 <body>
-	<span>환영합니다 ${sessionScope.user.name}님!<br /></span>
-	<span>hi this is english trial<br/></span>
-	<span>change info?<br/></span>
+	<p>환영합니다 ${sessionScope.user.name}님!</p>
+	<p>hi this is english trial</p>
+	<p>change info?</p>
 	<form action="update" method="post">
 		<label for="name">name</label>
 		<input id="name" type="text" name="name"/>

@@ -22,10 +22,10 @@ public class SignInController extends HttpServlet {
 		HttpSession session = req.getSession();
 		
 		if(session==null || !req.isRequestedSessionIdValid()) {
-			req.getRequestDispatcher("/WEB-INF/Index.html").forward(req, resp); // 로그인 안됬는데 새로고침 할 때
+			req.getRequestDispatcher("//WEB-INF/views/Index.html").forward(req, resp); // 로그인 안됬는데 새로고침 할 때
 			
 		} else { // 로그인 됐는데 새로고침 했을 때
-			req.getRequestDispatcher("/WEB-INF/logged-in.jsp").forward(req, resp);
+			req.getRequestDispatcher("//WEB-INF/views/logged-in.jsp").forward(req, resp);
 		}
 	}
 	
@@ -41,7 +41,7 @@ public class SignInController extends HttpServlet {
 			
 			session.setAttribute("user", user); //session에 저장
 			
-			req.getRequestDispatcher("/WEB-INF/logged-in.jsp").forward(req, resp); // 다음페이지로 보내기
+			req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp").forward(req, resp); // 다음페이지로 보내기
 			
 		} else {
 			resp.sendRedirect("/login_todo_service/index"); // 회원가입이 안됐을 경우 index로 보내기
