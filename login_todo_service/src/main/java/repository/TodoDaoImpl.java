@@ -139,7 +139,7 @@ public class TodoDaoImpl implements TodoDao {
 			amount = getTodoAmount(username);
 			
 			//while(rs.next())?
-			for(int i = 0; i < amount-1; i++) {
+			for(int i = 0; i < amount; i++) {
 				Todo temp = Todo.builder()
 						.todocode(rs.getInt(1 + (7*i)))
 						.usercode(rs.getInt(2 + (7*i)))

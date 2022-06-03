@@ -19,7 +19,7 @@ public class EncodingFilter implements Filter {
 		req.setCharacterEncoding("UTF-8");
 				
 		resp.setCharacterEncoding("UTF-8");
-		resp.setContentType("UTF-8");
+		resp.setContentType("text/html"); // very very difficult
 		chain.doFilter(req, resp);
 	}
 
