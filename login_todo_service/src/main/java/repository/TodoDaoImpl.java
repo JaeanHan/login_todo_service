@@ -22,20 +22,21 @@ public class TodoDaoImpl implements TodoDao {
 			con=pool.getConnection();
 			sb.append("insert into todos values(?, ?, ?, ?, ?, now(), now())");
 			
-			//num is 0 if selected new
-			if(num != 0) {
+			//num is 1 if new
+			// -1 if existing
+			if(num == -1) {
 				sb.append("on duplicate key update toDo=?, state=?, importance=?, update_date=now()");				
 			}
 			
 			pstmt=con.prepareStatement(sb.toString());
 			
-			pstmt.setInt(1, num==0 ? 0 : todo.getTodocode());
+			pstmt.setInt(1, todo.getTodocode());
 			pstmt.setInt(2, todo.getUsercode());
 			pstmt.setString(3, todo.getTodo());
 			pstmt.setString(4, todo.getState());
 			pstmt.setInt(5, todo.getImportance());
 			
-			if(num != 0) {
+			if(num == -1) {
 				pstmt.setString(6, todo.getTodo());
 				pstmt.setString(7, todo.getState());
 				pstmt.setInt(8, todo.getImportance());	
@@ -62,6 +63,7 @@ public class TodoDaoImpl implements TodoDao {
 		try {
 			con = pool.getConnection();
 			sql = "select * from todos where todocode=? and usercode=?";
+			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, todo.getTodocode());
 			pstmt.setInt(2, todo.getUsercode());
@@ -100,6 +102,7 @@ public class TodoDaoImpl implements TodoDao {
 					+ "	todos td LEFT OUTER JOIN user u ON td.usercode=u.usercode\n"
 					+ "WHERE\n"
 					+ "	u.username=?";
+			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, username);
 			result = pstmt.executeUpdate();
@@ -131,6 +134,7 @@ public class TodoDaoImpl implements TodoDao {
 					+ "	username=\"jaean\"\n"
 					+ "ORDER BY\n"
 					+ "	td.todocode";
+			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, username);
 			rs = pstmt.executeQuery();
@@ -171,8 +175,41 @@ public class TodoDaoImpl implements TodoDao {
 		try {
 			con = pool.getConnection();
 			sql = "delete from todos where todocode=? and usercode=?";
+			
 			pstmt = con.prepareStatement(sql);
 			result = pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return result;
+	}
+
+	@Override
+	public int getTodoCode(int usercode, String todo) {
+		String sql = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int result = 0;
+		
+		try {
+			con = pool.getConnection();
+			sql = "SELECT\n"
+					+ "	todocode\n"
+					+ "FROM todos\n"
+					+ "	where\n"
+					+ "		usercode=? AND toDo=?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, usercode);
+			pstmt.setString(2, todo);
+			rs = pstmt.executeQuery();
+			
+			rs.next();
+			result = rs.getInt(1);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -26,5 +26,20 @@
 	<form action="sign-out" method="get">
 		<button type="submit">sign out</button>
 	</form>
+	
+	<form action="merge" method="post">
+		<legend>manage todo!</legend>
+		<input type="text" required name="todo" name="todo" id="todo"/>
+		<label for="todo">todo</label>
+		<div>
+			<input type="radio" name="state" id="done" value="done"/>
+			<label for="done">Done</label>
+			<input type="radio" name="state" id="doing" value="doing" />
+			<label for="doing">Doing</label>
+		</div>
+		<input type="submit" value="add" name="submit"/>
+		<input type="submit" value="update" name="submit" />
+		<label for="update">추후 자바스크립스로 핸들</label>
+	</form>
 </body>
 </html>

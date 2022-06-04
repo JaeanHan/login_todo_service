@@ -19,13 +19,13 @@ public class SignInController extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		HttpSession session = req.getSession();
+		HttpSession session = req.getSession(false);
+		System.out.println("apply PRG pattern?"); // 새로고침 할 때 마다 session에 저장하니까
 		
-		if(session==null || !req.isRequestedSessionIdValid()) {
-			req.getRequestDispatcher("//WEB-INF/views/Index.html").forward(req, resp); // 로그인 안됬는데 새로고침 할 때
-			
-		} else { // 로그인 됐는데 새로고침 했을 때
-			req.getRequestDispatcher("//WEB-INF/views/logged-in.jsp").forward(req, resp);
+		if(session == null || req.isRequestedSessionIdValid()) {
+			req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp").forward(req, resp); // 로그인 됐는데 새로고침 했을 때
+		} else { 
+			resp.sendRedirect("/login_todo_service/index"); // 로그인 안됐거나 세션 없어졌을 때
 		}
 	}
 	
