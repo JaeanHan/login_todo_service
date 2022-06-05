@@ -88,33 +88,6 @@ public class TodoDaoImpl implements TodoDao {
 		return todoFound;
 	}
 	
-	private int getTodoAmount(String username) {
-		String sql = null;
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		int result = 0;
-		
-		try {
-			con=pool.getConnection();
-			sql = "SELECT\n"
-					+ "	COUNT(td.todocode)\n"
-					+ "FROM\n"
-					+ "	todos td LEFT OUTER JOIN user u ON td.usercode=u.usercode\n"
-					+ "WHERE\n"
-					+ "	u.username=?";
-			
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, username);
-			result = pstmt.executeUpdate();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt);
-		}
-		return result;
-	}
-
 	@Override
 	public ArrayList<Todo> getTodosByUsername(String username) {
 		ArrayList<Todo> todoList = new ArrayList<Todo>();
@@ -128,30 +101,24 @@ public class TodoDaoImpl implements TodoDao {
 			con = pool.getConnection();
 			sql = "SELECT\n"
 					+ "	td.*\n"
-					+ "FROM\n"
-					+ "	todos td LEFT OUTER JOIN user u ON td.usercode = u.usercode\n"
+					+ "FROM todos td LEFT OUTER JOIN user u ON td.todocode = u.usercode\n"
 					+ "WHERE\n"
-					+ "	username=\"jaean\"\n"
-					+ "ORDER BY\n"
-					+ "	td.todocode";
+					+ "	td.usercode = (SELECT usercode FROM user WHERE username=?)\n"
+					+ "ORDER BY td.todocode";
 			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, username);
 			rs = pstmt.executeQuery();
-			rs.next();
 			
-			amount = getTodoAmount(username);
-			
-			//while(rs.next())?
-			for(int i = 0; i < amount; i++) {
+			while(rs.next()) {
 				Todo temp = Todo.builder()
-						.todocode(rs.getInt(1 + (7*i)))
-						.usercode(rs.getInt(2 + (7*i)))
-						.todo(rs.getString(3 + (7*i)))
-						.state(rs.getString(4 + (7*i)))
-						.importance(rs.getInt(5 + (7*i)))
-						.create_date(rs.getTimestamp(6 + (7*i)).toLocalDateTime())
-						.update_date(rs.getTimestamp(7 + (7*i)).toLocalDateTime())
+						.todocode(rs.getInt(1))
+						.usercode(rs.getInt(2))
+						.todo(rs.getString(3))
+						.state(rs.getString(4))
+						.importance(rs.getInt(5))
+						.create_date(rs.getTimestamp(6).toLocalDateTime())
+						.update_date(rs.getTimestamp(7).toLocalDateTime())
 						.build();
 				
 				todoList.add(temp);
@@ -166,17 +133,21 @@ public class TodoDaoImpl implements TodoDao {
 	}
 
 	@Override
-	public int deleteTodo(Todo todo) {
+	public int deleteTodo(int usercode, String todo) {
 		String sql = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		int result = 0;
+		
+		int todocode = getTodoCode(usercode, todo);
 		
 		try {
 			con = pool.getConnection();
 			sql = "delete from todos where todocode=? and usercode=?";
 			
 			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, todocode);
+			pstmt.setInt(2, usercode);
 			result = pstmt.executeUpdate();
 
 		} catch (Exception e) {
@@ -210,7 +181,7 @@ public class TodoDaoImpl implements TodoDao {
 			
 			rs.next();
 			result = rs.getInt(1);
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

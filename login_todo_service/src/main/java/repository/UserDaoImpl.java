@@ -199,8 +199,27 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public int checkValidUsername(String username) {
-		// TODO Auto-generated method stub
-		return 0;
+		String sql = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int result = 0;
+		
+		
+		try {
+			con = pool.getConnection();
+			sql = "select count(usercode) from user where username=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, username);
+			rs = pstmt.executeQuery();
+			rs.next();
+			result = rs.getInt(1);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 
 	@Override

@@ -1,11 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
-<%@ page import="entity.User"%>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="entity.Todo" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<link rel="stylesheet" href="/login_todo_service/static/css/logged-in.css?ver=1">
+<link rel="stylesheet" href="/login_todo_service/static/css/logged-in.css">
 </head>
 <body>
 	<p>환영합니다 ${sessionScope.user.name}님!</p>
@@ -28,9 +29,9 @@
 	</form>
 	
 	<form action="merge" method="post">
-		<legend>manage todo!</legend>
-		<input type="text" required name="todo" name="todo" id="todo"/>
+		<p>manage todo!</p>
 		<label for="todo">todo</label>
+		<input type="text" required name="todo" name="todo" id="todo"/>
 		<div>
 			<input type="radio" name="state" id="done" value="done"/>
 			<label for="done">Done</label>
@@ -41,5 +42,23 @@
 		<input type="submit" value="update" name="submit" />
 		<label for="update">추후 자바스크립스로 핸들</label>
 	</form>
+	
+	<%
+		//test
+		if(session.getAttribute("todos") == null) {
+			out.println(session.getAttribute("t1") + "<br />");
+			out.println("no todo added yet! <br />");
+			
+		} else {
+			ArrayList<Todo> todos = (ArrayList<Todo>) session.getAttribute("todos");
+			
+			for(int i=0; i< todos.size(); i++) {
+				out.println(todos.get(i).getTodo() + "<br />");
+				out.println(todos.get(i).getUpdate_date() + "<br />");
+			}
+			
+		}
+	%>
+	
 </body>
 </html>

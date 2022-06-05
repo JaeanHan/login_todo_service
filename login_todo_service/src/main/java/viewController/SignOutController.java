@@ -1,4 +1,4 @@
-package controller;
+package viewController;
 
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ public class SignOutController extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
 		
-		session.removeAttribute("user"); // session에서 저장된 유저 제거후
+		session.invalidate(); // user and todos 다지움
 		resp.sendRedirect("/login_todo_service/index"); // index로 보내기
 	}
 }

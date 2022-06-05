@@ -1,6 +1,7 @@
 package todoController;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,7 +22,8 @@ public class TodoMergeController extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
-		int usercode = ((User)session.getAttribute("user")).getUsercode();
+		User user = (User)session.getAttribute("user");
+		int usercode = user.getUsercode();
 		
 		String todoContents = (String)req.getParameter("todo");
 		String option = (String) req.getParameter("submit");
@@ -39,7 +41,6 @@ public class TodoMergeController extends HttpServlet {
 		} else {
 			num = -1; //update
 			todocode = todoDao.getTodoCode(usercode, todoContents);
-			System.out.println(todocode);
 		}
 		
 		Todo todo = Todo.builder()
@@ -47,12 +48,18 @@ public class TodoMergeController extends HttpServlet {
 					.usercode(usercode)
 					.todo(todoContents)
 					.state(state)
-					.importance(1)
+					.importance(1) // 이거 그냥 지울지 고민중
 					.build();
 		
-		int result = todoDao.addOrUpdateTodo(todo, num);
+		int result = todoDao.addOrUpdateTodo(todo, num); // update db
 		
-//		req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp").forward(req, resp);
+		session.removeAttribute("todos"); // remove old todos
+	
+		ArrayList<Todo> todos = new ArrayList<Todo>(); // new todos	
+		todos = todoDao.getTodosByUsername(user.getUsername());
+		
+		session.setAttribute("todos", todos); // new todos update
+		
 		resp.sendRedirect("/login_todo_service/sign-in");
 	}
 }
