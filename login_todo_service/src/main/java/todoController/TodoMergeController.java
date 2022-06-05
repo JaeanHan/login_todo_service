@@ -31,10 +31,6 @@ public class TodoMergeController extends HttpServlet {
 		
 		int num;
 		int todocode=0;
-		
-		System.out.println("Controller: " + session.getId());
-		System.out.println(option);
-		System.out.println(todoContents);
 
 		if(option.equals("add")) {
 			num = 1; //add
@@ -53,13 +49,13 @@ public class TodoMergeController extends HttpServlet {
 		
 		int result = todoDao.addOrUpdateTodo(todo, num); // update db
 		
-		session.removeAttribute("todos"); // remove old todos
+		req.removeAttribute("todos"); // remove old todos
 	
 		ArrayList<Todo> todos = new ArrayList<Todo>(); // new todos	
 		todos = todoDao.getTodosByUsername(user.getUsername());
 		
-		session.setAttribute("todos", todos); // new todos update
+		req.setAttribute("todos", todos); // new todos update
 		
-		resp.sendRedirect("/login_todo_service/sign-in");
+		resp.sendRedirect("/login_todo_service/sign-in"); //PRG?
 	}
 }

@@ -9,7 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
-@WebFilter("/*")
+@WebFilter("*.jsp")
 public class EncodingFilter implements Filter {
 
 	@Override
@@ -17,10 +17,11 @@ public class EncodingFilter implements Filter {
 			throws IOException, ServletException {
 		
 		req.setCharacterEncoding("UTF-8");
-				
-		resp.setCharacterEncoding("UTF-8");
-		resp.setContentType("text/html"); // very very difficult
+		
 		chain.doFilter(req, resp);
+		
+		resp.setCharacterEncoding("UTF-8");
+		resp.setContentType("text/html; charset=UTF-8");
 	}
 
 }

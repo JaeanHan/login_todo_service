@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<link rel="stylesheet" href="/login_todo_service/static/css/logged-in.css">
+<link rel="stylesheet" href="/login_todo_service/static/css/logged-in.css?ver=1">
 </head>
 <body>
 	<p>환영합니다 ${sessionScope.user.name}님!</p>
@@ -45,12 +45,12 @@
 	
 	<%
 		//test
-		if(session.getAttribute("todos") == null) {
-			out.println(session.getAttribute("t1") + "<br />");
+		if(request.getAttribute("todos") == null) {
+			out.println("why null? <br />");
 			out.println("no todo added yet! <br />");
 			
 		} else {
-			ArrayList<Todo> todos = (ArrayList<Todo>) session.getAttribute("todos");
+			ArrayList<Todo> todos = (ArrayList<Todo>) request.getAttribute("todos");
 			
 			for(int i=0; i< todos.size(); i++) {
 				out.println(todos.get(i).getTodo() + "<br />");

@@ -17,7 +17,7 @@ public class SignOutController extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
 		
-		session.invalidate(); // user and todos 다지움
+		session.invalidate(); // user 지움 todos는 req니 창 종료시 삭제
 		resp.sendRedirect("/login_todo_service/index"); // index로 보내기
 	}
 }

@@ -95,7 +95,6 @@ public class TodoDaoImpl implements TodoDao {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		int amount = 0;
 		
 		try {
 			con = pool.getConnection();
