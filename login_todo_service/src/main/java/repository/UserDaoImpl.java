@@ -176,25 +176,43 @@ public class UserDaoImpl implements UserDao {
 		PreparedStatement pstmt = null;
 		String sql = null;
 		int result = 0;
-//		System.out.println(user.getUsername());
 		try {
 			con=pool.getConnection();
-			sql = "delete from user where username=?";
+			sql = "delete from user where usercode=? and username=?";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, user.getUsername());
+			pstmt.setInt(1, user.getUsercode());
+			pstmt.setString(2, user.getUsername());
 			result = pstmt.executeUpdate();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		return result;
 	}
 
 	@Override
 	public int checkValidEmail(String email) {
-		// TODO Auto-generated method stub
-		return 0;
+		String sql = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int result = 0;
+		
+		try {
+			con = pool.getConnection();
+			sql = "select count(email) from user where email=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, email);
+			rs = pstmt.executeQuery();
+			rs.next();
+			result = rs.getInt(1);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		return result;
 	}
 
 	@Override
@@ -204,7 +222,6 @@ public class UserDaoImpl implements UserDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		int result = 0;
-		
 		
 		try {
 			con = pool.getConnection();
@@ -217,8 +234,9 @@ public class UserDaoImpl implements UserDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
 		}
-		
 		return result;
 	}
 

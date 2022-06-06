@@ -26,25 +26,18 @@ public class SignInController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession(false);
-		
-//		System.out.println("apply PRG pattern");
+		System.out.println("apply PRG pattern");
 		
 		if(session == null ) {
-//			System.out.println("123");
 			resp.sendRedirect("/login_todo_service/index"); // 로그인 안됐거나 세션 없어졌을 때
 			
 		} else { 
 			String username = ((User) session.getAttribute("user")).getUsername();
+			
 			ArrayList<Todo> todos = new ArrayList<Todo>();
-			
 			todos = todoDao.getTodosByUsername(username);
-			System.out.println("SignInController: " +todos);
 			
-			if(!todos.isEmpty()) {
-				req.setAttribute("todos", todos); // requestuest
-				System.out.println("SignInController: " + todos); //이거 왜 두번 출력되지
-			}
-			
+			req.setAttribute("todos", todos); // request
 			req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp" ).forward(req, resp); 
 			
 		}
@@ -62,6 +55,7 @@ public class SignInController extends HttpServlet {
 		if(user != null) { // 잘 받아왔으면
 			session.setMaxInactiveInterval(60 * 20);
 			session.setAttribute("user", user); // session에 저장
+			
 //			System.out.println("PRG check");
 			resp.sendRedirect("/login_todo_service/sign-in"); // PRG
 			

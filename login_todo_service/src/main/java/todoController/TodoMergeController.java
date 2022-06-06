@@ -20,12 +20,13 @@ public class TodoMergeController extends HttpServlet {
 	private TodoDao todoDao = new TodoDaoImpl();
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ArrayList<Todo> todos = new ArrayList<Todo>();
 		HttpSession session = req.getSession();
 		User user = (User)session.getAttribute("user");
 		int usercode = user.getUsercode();
 		
-		String todoContents = (String)req.getParameter("todo");
+		String todoContent = (String)req.getParameter("todo");
 		String option = (String) req.getParameter("submit");
 		String state = (String)req.getParameter("state");
 		
@@ -36,26 +37,23 @@ public class TodoMergeController extends HttpServlet {
 			num = 1; //add
 		} else {
 			num = -1; //update
-			todocode = todoDao.getTodoCode(usercode, todoContents);
+			todocode = todoDao.getTodoCode(usercode, todoContent);
 		}
 		
 		Todo todo = Todo.builder()
 					.todocode(todocode)
 					.usercode(usercode)
-					.todo(todoContents)
+					.todo(todoContent)
 					.state(state)
-					.importance(1) // 이거 그냥 지울지 고민중
+					.importance(1) // order by importance desc
 					.build();
 		
 		int result = todoDao.addOrUpdateTodo(todo, num); // update db
 		
-		req.removeAttribute("todos"); // remove old todos
-	
-		ArrayList<Todo> todos = new ArrayList<Todo>(); // new todos	
 		todos = todoDao.getTodosByUsername(user.getUsername());
 		
+		req.removeAttribute("todos"); // remove old todos		
 		req.setAttribute("todos", todos); // new todos update
-		
-		resp.sendRedirect("/login_todo_service/sign-in"); //PRG?
+		req.getRequestDispatcher("/login_todo_service/sign-in").forward(req, resp); 
 	}
 }

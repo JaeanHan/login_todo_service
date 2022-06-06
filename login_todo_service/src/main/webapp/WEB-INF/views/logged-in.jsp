@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="entity.Todo" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,10 +29,10 @@
 		<button type="submit">sign out</button>
 	</form>
 	
-	<form action="merge" method="post">
+	<form action="merge" method="get">
 		<p>manage todo!</p>
 		<label for="todo">todo</label>
-		<input type="text" required name="todo" name="todo" id="todo"/>
+		<input type="text" required name="todo" id="todo" value="todo"/>
 		<div>
 			<input type="radio" name="state" id="done" value="done"/>
 			<label for="done">Done</label>
@@ -40,9 +41,19 @@
 		</div>
 		<input type="submit" value="add" name="submit"/>
 		<input type="submit" value="update" name="submit" />
-		<label for="update">추후 자바스크립스로 핸들</label>
+		<label>추후 자바스크립스로 핸들</label>
 	</form>
 	
+	<c:forEach var="item" items="${todos}">
+		<span>${item.todo}</span>
+		<span>${item.state}</span>
+		<span>${item.importance le 1 ? "normal" : "important"}</span>
+		<form action="delete" method="get">
+			<button type="submit" name="del_btn" value="${item.todo}">delete</button>
+		</form>
+	</c:forEach>
+
+<%--
 	<%
 		//test
 		if(request.getAttribute("todos") == null) {
@@ -53,12 +64,13 @@
 			ArrayList<Todo> todos = (ArrayList<Todo>) request.getAttribute("todos");
 			
 			for(int i=0; i< todos.size(); i++) {
-				out.println(todos.get(i).getTodo() + "<br />");
-				out.println(todos.get(i).getUpdate_date() + "<br />");
+				out.print(todos.get(i).getTodo() + " / ");
+				out.print(todos.get(i).getState() + " / ");
+				out.println(todos.get(i).getImportance() == 1 ? "normal" : "urgent" + "<br />");
 			}
 			
 		}
 	%>
-	
+ --%>
 </body>
 </html>
