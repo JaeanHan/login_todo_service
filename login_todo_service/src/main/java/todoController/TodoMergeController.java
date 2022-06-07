@@ -29,6 +29,7 @@ public class TodoMergeController extends HttpServlet {
 		String todoContent = (String)req.getParameter("todo");
 		String option = (String) req.getParameter("submit");
 		String state = (String)req.getParameter("state");
+		int importance = Integer.parseInt(req.getParameter("importance"));
 		
 		int num;
 		int todocode=0;
@@ -45,15 +46,15 @@ public class TodoMergeController extends HttpServlet {
 					.usercode(usercode)
 					.todo(todoContent)
 					.state(state)
-					.importance(1) // order by importance desc
+					.importance(importance) // order by importance desc
 					.build();
 		
 		int result = todoDao.addOrUpdateTodo(todo, num); // update db
 		
-		todos = todoDao.getTodosByUsername(user.getUsername());
+		todos = todoDao.getTodosByUsercode(user.getUsercode());
 		
 		req.removeAttribute("todos"); // remove old todos		
 		req.setAttribute("todos", todos); // new todos update
-		req.getRequestDispatcher("/login_todo_service/sign-in").forward(req, resp); 
+		resp.sendRedirect("/login_todo_service/sign-in");
 	}
 }

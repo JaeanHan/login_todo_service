@@ -51,45 +51,9 @@ public class TodoDaoImpl implements TodoDao {
 		}
 		return result;
 	}
-
-	@Override
-	public Todo getTodo(Todo todo) {
-		String sql = null;
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		Todo todoFound = null;
-		
-		try {
-			con = pool.getConnection();
-			sql = "select * from todos where todocode=? and usercode=?";
-			
-			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, todo.getTodocode());
-			pstmt.setInt(2, todo.getUsercode());
-			rs=pstmt.executeQuery();
-			rs.next();
-			
-			todoFound = Todo.builder()
-					.todocode(rs.getInt(1))
-					.usercode(rs.getInt(2))
-					.todo(rs.getString(3))
-					.state(rs.getString(4))
-					.importance(rs.getInt(5))
-					.create_date(rs.getTimestamp(6).toLocalDateTime())
-					.update_date(rs.getTimestamp(7).toLocalDateTime())
-					.build();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt, rs);
-		}
-		return todoFound;
-	}
 	
 	@Override
-	public ArrayList<Todo> getTodosByUsername(String username) {
+	public ArrayList<Todo> getTodosByUsercode(int usercode) {
 		ArrayList<Todo> todoList = new ArrayList<Todo>();
 		String sql = null;
 		Connection con = null;
@@ -102,11 +66,10 @@ public class TodoDaoImpl implements TodoDao {
 					+ "	td.*\n"
 					+ "FROM todos td LEFT OUTER JOIN user u ON td.todocode = u.usercode\n"
 					+ "WHERE\n"
-					+ "	td.usercode = (SELECT usercode FROM user WHERE username=?)\n"
-					+ "ORDER BY td.todocode";
+					+ "	td.usercode = ?";
 			
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, username);
+			pstmt.setInt(1, usercode);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
@@ -132,13 +95,11 @@ public class TodoDaoImpl implements TodoDao {
 	}
 
 	@Override
-	public int deleteTodo(int usercode, String todo) {
+	public int deleteTodo(int usercode, int todocode) {
 		String sql = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		int result = 0;
-		
-		int todocode = getTodoCode(usercode, todo);
 		
 		try {
 			con = pool.getConnection();

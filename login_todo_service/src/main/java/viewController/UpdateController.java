@@ -17,15 +17,7 @@ import repository.UserDaoImpl;
 @WebServlet("/update")
 public class UpdateController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	UserDao userDao = new UserDaoImpl();
-	
-//	@Override 새로고침 하는 경우?
-//	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//		HttpSession session = req.getSession();
-////		User user = (User) session.getAttribute("user");
-//		req.getRequestDispatcher("logged-in.jsp").forward(req, resp);
-//		
-//	}
+	private UserDao userDao = new UserDaoImpl();
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -53,6 +45,7 @@ public class UpdateController extends HttpServlet {
 		session.removeAttribute("user"); // 기존꺼 지우고
 		session.setAttribute("user", currentUser); // 재등록
 		
-		req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp").forward(req, resp); 
+//		req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp").forward(req, resp);
+		resp.sendRedirect("/login_todo_service/sign-in");
 	}
 }

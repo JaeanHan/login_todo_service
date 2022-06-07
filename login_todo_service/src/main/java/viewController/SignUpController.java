@@ -16,7 +16,7 @@ import repository.UserDaoImpl;
 @WebServlet("/sign-up")
 public class SignUpController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	UserDao userDao = new UserDaoImpl();
+	private UserDao userDao = new UserDaoImpl();
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -24,6 +24,11 @@ public class SignUpController extends HttpServlet {
 		String email = req.getParameter("email");
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
+		
+//		if(userDao.checkValidString(username)==0 || userDao.checkValidString(password)==0) {
+//			resp.sendRedirect("/login_todo_service/index");
+//			return;
+//		}
 		
 		User user = User.builder()
 				.name(name)
@@ -33,7 +38,7 @@ public class SignUpController extends HttpServlet {
 				.build();
 		
 		int result = userDao.SignUp(user);
-		if(result !=0 ) {
+		if(result == 1 ) {
 			resp.sendRedirect("/login_todo_service/index");
 		}
 	}

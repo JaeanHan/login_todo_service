@@ -4,12 +4,27 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.DuplicateFormatFlagsException;
+import java.util.HashMap;
 
 import db.DBConnectionMgr;
 import entity.User;
+import exception.DuplicateUsernameException;
+import exception.PasswordMismatchException;
+import exception.UserNotFoundException;
 
 public class UserDaoImpl implements UserDao {
 	private DBConnectionMgr pool = DBConnectionMgr.getInstance();
+	
+//	@Override
+//	public int checkValidString(String string) {
+//		int result=1;
+//		
+//		if(string.contains("\'") || string.contains("\"") || string.contains("=")) {
+//			result=0;
+//		}
+//		return result;
+//	}
 	
 	@Override
 	public int SignUp(User user) {
@@ -26,8 +41,8 @@ public class UserDaoImpl implements UserDao {
 			result = pstmt.executeUpdate();
 			
 			if(result > 0) { // if id duplicated
-				pool.freeConnection(con, pstmt);
-				return 0; 
+				throw new DuplicateUsernameException();
+				
 			} else {
 				sb.setLength(0); // fastest
 				sb.append("insert into user values(0, ?, ?, ?, ?, now(), now())");
@@ -41,12 +56,16 @@ public class UserDaoImpl implements UserDao {
 				
 				result = pstmt.executeUpdate();
 			}
+		} catch (DuplicateUsernameException e) {
+			System.out.println("username already taken");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		} finally {
 			pool.freeConnection(con, pstmt);
+			
 		}
-		
 		return result;
 	}
 	
@@ -79,15 +98,14 @@ public class UserDaoImpl implements UserDao {
 					.build();
 			
 		} catch (SQLException e) {
-			System.out.println("idk maybe sql?");
-			
+			System.out.println("error in UDI");
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("IDK but happened");
+			
 		} finally {
 			pool.freeConnection(con, pstmt, rs);
+			
 		}
-		
 		return user;
 	}
 
@@ -96,31 +114,38 @@ public class UserDaoImpl implements UserDao {
 		StringBuilder sb = new StringBuilder();
 		Connection con = null;
 		PreparedStatement pstmt = null;
-		int result=0;
+		String result = null;
 		ResultSet rs = null;
 		User user = null;
 		
 		try {
 			con = pool.getConnection();
-			sb.append("select count(name) from user where username=? and password=?");
-			
+			sb.append("select password from user where username=?");
 			pstmt = con.prepareStatement(sb.toString());
 			pstmt.setString(1, username);
-			pstmt.setString(2, password);
-			
 			rs = pstmt.executeQuery();
+			
+			if(rs == null) {
+				throw new UserNotFoundException();
+			}
+			
 			rs.next();
+			result = rs.getString(1);
 			
-			result = rs.getInt(1);
-			
-			if(result == 1) {
-				user = getUserByUsername(username);
+			if(result.equals(password)) {
+				user = getUserByUsername(username);				
+			} else {
+				throw new PasswordMismatchException();
 			}
 			
 		} catch (SQLException e) {
-			pool.freeConnection(con, pstmt, rs);
-			System.out.println("booboo");
-			return null;
+			System.out.println("trying sql injection?");
+			
+		} catch (UserNotFoundException e) {
+			System.out.println("user not found");
+			
+		} catch (PasswordMismatchException e) {
+			System.out.println("password no match");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -155,16 +180,20 @@ public class UserDaoImpl implements UserDao {
 				sb.append(" password = " + "\"" + newUser.getPassword() + "\",");
 			}
 		
-		sb.append(" update_date = now() where username = " + "\"" + newUser.getUsername() +"\"");
+		sb.append(" update_date = now() where username = ?");
 		
 		try {
 			con = pool.getConnection();
 			pstmt = con.prepareStatement(sb.toString());
+			pstmt.setString(1, newUser.getUsername()); // sql injection
 			result = pstmt.executeUpdate();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		} finally {
 			pool.freeConnection(con, pstmt);
+			
 		}
 		
 		return result;
@@ -186,6 +215,10 @@ public class UserDaoImpl implements UserDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			
+		} finally {
+			pool.freeConnection(con, pstmt);
+			
 		}
 		return result;
 	}
@@ -209,33 +242,10 @@ public class UserDaoImpl implements UserDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			pool.freeConnection(con, pstmt, rs);
-		}
-		return result;
-	}
-
-	@Override
-	public int checkValidUsername(String username) {
-		String sql = null;
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		int result = 0;
-		
-		try {
-			con = pool.getConnection();
-			sql = "select count(usercode) from user where username=?";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, username);
-			rs = pstmt.executeQuery();
-			rs.next();
-			result = rs.getInt(1);
 			
-		} catch (Exception e) {
-			e.printStackTrace();
 		} finally {
 			pool.freeConnection(con, pstmt, rs);
+			
 		}
 		return result;
 	}

@@ -32,12 +32,20 @@
 	<form action="merge" method="get">
 		<p>manage todo!</p>
 		<label for="todo">todo</label>
-		<input type="text" required name="todo" id="todo" value="todo"/>
+		<input type="text" required name="todo" id="todo" placeholder="add todo here!"/>
 		<div>
-			<input type="radio" name="state" id="done" value="done"/>
+			<p>check the state!</p>
+			<input type="radio" name="state" id="done" value="done" required/>
 			<label for="done">Done</label>
 			<input type="radio" name="state" id="doing" value="doing" />
 			<label for="doing">Doing</label>
+		</div>
+		<div>
+			<p>check the importance!</p>
+			<input type="radio" name="importance" id="personal" value="0" required/>
+			<label for="personal">Personal</label>
+			<input type="radio" name="importance" id="work" value="1" />
+			<label for="work">Work</label>
 		</div>
 		<input type="submit" value="add" name="submit"/>
 		<input type="submit" value="update" name="submit" />
@@ -47,9 +55,9 @@
 	<c:forEach var="item" items="${todos}">
 		<span>${item.todo}</span>
 		<span>${item.state}</span>
-		<span>${item.importance le 1 ? "normal" : "important"}</span>
+		<span>${item.importance le 1 ? "Personal" : "Work"}</span>
 		<form action="delete" method="get">
-			<button type="submit" name="del_btn" value="${item.todo}">delete</button>
+			<button type="submit" name="del_btn" value="${item.todocode}">delete</button>
 		</form>
 	</c:forEach>
 

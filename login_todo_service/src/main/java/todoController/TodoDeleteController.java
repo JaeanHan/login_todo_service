@@ -22,14 +22,11 @@ public class TodoDeleteController extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
 		User user = (User) session.getAttribute("user");
-		String todo = req.getParameter("del_btn");
-		System.out.println(todo);
+		int todocode = Integer.parseInt(req.getParameter("del_btn"));
+		System.out.println("TodoDeleteController: " + todocode);
 		
-		todoDao.deleteTodo(user.getUsercode(), todo);
-		
-		
-		
-		
+		todoDao.deleteTodo(user.getUsercode(), todocode);
+	
 		resp.sendRedirect("/login_todo_service/sign-in");
 	}
 }
