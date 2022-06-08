@@ -10,6 +10,7 @@
     `email` VARCHAR(50) NOT NULL COLLATE 'utf8mb3_general_ci',
     `username` VARCHAR(50) NOT NULL COLLATE 'utf8mb3_general_ci',
     `password` VARCHAR(50) NOT NULL COLLATE 'utf8mb3_general_ci',
+    `role` VARCHAR(50) NOT NULL COLLATE 'utf8mb3_general_ci',
     `create_date` DATETIME NOT NULL,
     `update_date` DATETIME NOT NULL,
     PRIMARY KEY (`usercode`) USING BTREE,
@@ -34,4 +35,4 @@
     CONSTRAINT `todoCode` FOREIGN KEY (`usercode`) REFERENCES `login_practice`.`user` (`usercode`) ON UPDATE NO ACTION ON DELETE NO ACTION
     )
     COLLATE='utf8mb3_general_ci'
-    ENGINE=InnoDB
+    ENGINE=InnoDB;

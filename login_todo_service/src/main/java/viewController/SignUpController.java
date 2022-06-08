@@ -1,14 +1,16 @@
 package viewController;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import entity.User;
+import repository.Lambda;
 import repository.UserDao;
 import repository.UserDaoImpl;
 
@@ -24,9 +26,24 @@ public class SignUpController extends HttpServlet {
 		String email = req.getParameter("email");
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
+		String role = "user";
 		
-//		if(userDao.checkValidString(username)==0 || userDao.checkValidString(password)==0) {
-//			resp.sendRedirect("/login_todo_service/index");
+//		"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$" 
+//		최소 8자리에 숫자, 문자, 특수문자 각각 1개 이상 포함
+		
+		Lambda isValidPassword = (check) -> {
+			Pattern pattern = // 숫자 영어 소문자 하나 이상 포함
+					Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d){2,}$");
+			
+			if (check == null) {
+		        return false; 
+		    }
+		    return pattern.matcher(check).matches();
+		};
+		
+//		if(!isValidPassword.isTrue(password)) {
+//			resp.sendRedirect("/login_todo_service/issue");
+//			System.out.println("works");
 //			return;
 //		}
 		
@@ -35,6 +52,7 @@ public class SignUpController extends HttpServlet {
 				.email(email)
 				.username(username)
 				.password(password)
+				.role(role)
 				.build();
 		
 		int result = userDao.SignUp(user);

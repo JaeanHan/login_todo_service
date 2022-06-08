@@ -10,6 +10,6 @@ public interface UserDao {
 	public int deleteUserByUsername(User user);
 	public int checkValidEmail(String email); // email confirmation
 //	public int checkValidString(String string);
-	public int createTempPassword(String username, String email);
+	public int resetPassword(String username, String email, String newPassword);
 	
 }

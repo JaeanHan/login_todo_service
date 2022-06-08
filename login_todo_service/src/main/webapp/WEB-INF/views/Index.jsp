@@ -72,7 +72,7 @@
           <input
             type="password"
             required
-            placeholder="password"
+            placeholder="at least one number and lower case"
             name="password"
             class="password"
           />
