@@ -4,14 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.regex.Pattern;
+import java.util.DuplicateFormatFlagsException;
+import java.util.HashMap;
 
 import db.DBConnectionMgr;
 import entity.User;
 import exception.DuplicateUsernameException;
 import exception.PasswordMismatchException;
 import exception.UserNotFoundException;
-import respondDto.RespondDto;
 
 public class UserDaoImpl implements UserDao {
 	private DBConnectionMgr pool = DBConnectionMgr.getInstance();
@@ -45,7 +45,7 @@ public class UserDaoImpl implements UserDao {
 				
 			} else {
 				sb.setLength(0); // fastest
-				sb.append("insert into user values(0, ?, ?, ?, ?, ?, now(), now())");
+				sb.append("insert into user values(0, ?, ?, ?, ?, now(), now())");
 				
 				pstmt.close();
 				pstmt = con.prepareStatement(sb.toString());
@@ -53,7 +53,7 @@ public class UserDaoImpl implements UserDao {
 				pstmt.setString(2, user.getEmail());
 				pstmt.setString(3, user.getUsername());
 				pstmt.setString(4, user.getPassword());
-				pstmt.setString(5, user.getRole());				
+				
 				result = pstmt.executeUpdate();
 			}
 		} catch (DuplicateUsernameException e) {
@@ -93,9 +93,8 @@ public class UserDaoImpl implements UserDao {
 					.email(rs.getString(3))
 					.username(rs.getString(4))
 					.password(rs.getString(5))
-					.role(rs.getString(6))
-					.create_date(rs.getTimestamp(7).toLocalDateTime())
-					.update_date(rs.getTimestamp(8).toLocalDateTime())
+					.create_date(rs.getTimestamp(6).toLocalDateTime())
+					.update_date(rs.getTimestamp(7).toLocalDateTime())
 					.build();
 			
 		} catch (SQLException e) {
@@ -140,7 +139,7 @@ public class UserDaoImpl implements UserDao {
 			}
 			
 		} catch (SQLException e) {
-			System.out.println("wow");
+			System.out.println("trying sql injection?");
 			
 		} catch (UserNotFoundException e) {
 			System.out.println("user not found");
@@ -202,123 +201,61 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public int deleteUserByUsername(User user) {
-		String sql = "delete from user where usercode=? and username=?";
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		String sql = null;
 		int result = 0;
-		result = (int) 
-				autoSQL(sql, user.getUsername(), 
-						Integer.toString(user.getUsercode()), 
-						0).getResult();
-
+		try {
+			con=pool.getConnection();
+			sql = "delete from user where usercode=? and username=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, user.getUsercode());
+			pstmt.setString(2, user.getUsername());
+			result = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			pool.freeConnection(con, pstmt);
+			
+		}
 		return result;
 	}
 
 	@Override
 	public int checkValidEmail(String email) {
-		int result = 0;
-//		"^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$"
-//		"^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$"
-		return result;
-	}
-
-	@Override
-	public int resetPassword(String username, String email, String newPassword) {
-		String sql ="SELECT\n"
-				+ "	COUNT(username),\n"
-				+ "	COUNT(email),\n"
-				+ "FROM user\n"
-				+ "	WHERE username=? AND email=?";
-		ResultSet rs = null;
-		int selectResult=0;
-		int updateResult=0;
-		
-		try {
-			rs = (ResultSet) autoSQL(sql, username, email, 1).getResult();
-			rs.next();
-			selectResult = rs.getInt(1) + rs.getInt(2) + rs.getInt(3);
-			rs.close();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		if(selectResult == 3) {
-			updateResult=updatePassword(username, newPassword);
-		}
-		return updateResult;
-	}
-	
-	private int updatePassword(String username, String newPassword) {
-		String sql = "UPDATE\n"
-				+ "	user\n"
-				+ "SET\n"
-				+ "	PASSWORD=?\n"
-				+ "WHERE\n"
-				+ "	username=?";
-		int result = 0;
-		result = (int) autoSQL(sql, username, newPassword, 0).getResult();
-		
-		return 0;
-	}
-
-	//1 select mode
-	//0 insert, update, delete mode
-	private RespondDto<?> autoSQL(String sql, String username, String value, int mode) {
+		String sql = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		int result = 0;
-		int usercode = 0;
-		RespondDto<ResultSet> respond = null;
-		RespondDto<Integer> respond2 = null;
-		
-		Lambda isNumeric = (check) -> {
-			Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?"); // "^[0-9]*$"
-			
-			if (check == null) {
-		        return false; 
-		    }
-		    return pattern.matcher(check).matches();
-		};
-		
-		if(isNumeric.isTrue(value)) {
-			usercode = Integer.parseInt(value);
-		}
 		
 		try {
-			con=pool.getConnection();
-			pstmt=con.prepareStatement(sql);
+			con = pool.getConnection();
+			sql = "select count(email) from user where email=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, email);
+			rs = pstmt.executeQuery();
+			rs.next();
+			result = rs.getInt(1);
 			
-			if(mode==1) {
-				pstmt.setString(1, username);
-				pstmt.setString(2, value);
-				rs = pstmt.executeQuery();
-				respond = new RespondDto<ResultSet>(rs);
-				
-			} else {
-				
-				if(usercode == 0) {
-					pstmt.setString(1, value);					
-				} else {
-					pstmt.setInt(1, usercode);
-				}
-				
-				pstmt.setString(2, username);
-				result = pstmt.executeUpdate();
-				respond2 = new RespondDto<Integer>(result);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		} finally {
-			if(mode==1) {
-				pool.freeConnection(con, pstmt, rs);				
-			} else {
-				pool.freeConnection(con, pstmt);
-			}
+			pool.freeConnection(con, pstmt, rs);
+			
 		}
-		
-		return mode==1? respond : respond2;
+		return result;
 	}
+
+	@Override
+	public int createTempPassword(String username, String email) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
 
 }
