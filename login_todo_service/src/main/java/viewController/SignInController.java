@@ -31,7 +31,6 @@ public class SignInController extends HttpServlet {
 			resp.sendRedirect("/login_todo_service/index"); // 로그인 안됐거나 세션 없어졌을 때
 			
 		} else { 
-//			String username = ((User) session.getAttribute("user")).getUsername();
 			int usercode = ((User) session.getAttribute("user")).getUsercode();
 			
 			ArrayList<Todo> todos = new ArrayList<Todo>(); //이거를 로그인 처음 할 때 한번 가져와서
@@ -47,11 +46,6 @@ public class SignInController extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
-		
-//		if(userDao.checkValidString(username)==0 || userDao.checkValidString(password)==0) {
-//			resp.sendRedirect("/login_todo_service/index");
-//			return;
-//		}
 		
 		User user = userDao.SignIn(username, password); // db에서 정보 확인하고 받아와서
 

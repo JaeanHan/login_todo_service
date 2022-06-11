@@ -29,23 +29,21 @@ public class SignUpController extends HttpServlet {
 		String role = "user";
 		
 //		"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$" 
-//		최소 8자리에 숫자, 문자, 특수문자 각각 1개 이상 포함
+//		최소 3자리에 숫자, 문자, 특수문자 각각 1개 이상 포함
 		
 		Lambda isValidPassword = (check) -> {
-			Pattern pattern = // 숫자 영어 소문자 하나 이상 포함
-					Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d){2,}$");
-			
+			Pattern pattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{3,}$");
 			if (check == null) {
 		        return false; 
 		    }
 		    return pattern.matcher(check).matches();
 		};
 		
-//		if(!isValidPassword.isTrue(password)) {
-//			resp.sendRedirect("/login_todo_service/issue");
-//			System.out.println("works");
-//			return;
-//		}
+		if(!isValidPassword.isTrue(password)) {
+			resp.sendRedirect("/login_todo_service/issue");
+			System.out.println("why?");
+			return;
+		}
 		
 		User user = User.builder()
 				.name(name)

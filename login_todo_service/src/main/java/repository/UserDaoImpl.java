@@ -11,7 +11,7 @@ import entity.User;
 import exception.DuplicateUsernameException;
 import exception.PasswordMismatchException;
 import exception.UserNotFoundException;
-import respondDto.RespondDto;
+import respond.RespondDto;
 
 public class UserDaoImpl implements UserDao {
 	private DBConnectionMgr pool = DBConnectionMgr.getInstance();

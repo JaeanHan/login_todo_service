@@ -66,8 +66,9 @@ public class TodoDaoImpl implements TodoDao {
 					+ "	td.*\n"
 					+ "FROM todos td LEFT OUTER JOIN user u ON td.todocode = u.usercode\n"
 					+ "WHERE\n"
-					+ "	td.usercode = ?";
-			
+					+ "	td.usercode = ?\n"
+					+ "ORDER BY td.importance DESC, create_date;";
+		
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, usercode);
 			rs = pstmt.executeQuery();

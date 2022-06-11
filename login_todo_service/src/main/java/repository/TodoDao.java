@@ -9,5 +9,5 @@ public interface TodoDao {
 	public ArrayList<Todo> getTodosByUsercode(int usercode);
 	public int deleteTodo(int usercode, int todocode);
 	public int getTodoCode(int usercode, String todo);
-	
+//	public int updateTodobyBtn();
 }

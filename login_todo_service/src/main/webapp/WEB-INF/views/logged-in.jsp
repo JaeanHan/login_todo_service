@@ -54,10 +54,22 @@
 	
 	<c:forEach var="item" items="${todos}">
 		<span>${item.todo}</span>
-		<span>${item.state}</span>
-		<span>${item.importance le 1 ? "Personal" : "Work"}</span>
+		
+		<select name="newState" form="todoslist">
+			<option value="${item.state}">${item.state eq "doing"? "doing" : "done"} </option>
+			<option value="${item.state eq 'doing' ? 'done' : 'doing' }">${item.state eq "doing" ? "done" : "doing"}</option>
+		</select>
+		
+		<select name="newImportance" form="todoslist">
+			<option value="${item.importance}">${item.importance eq 1 ? "Work" : "Personal"}</option>
+			<option value="${item.importance eq 1 ? 0 : 1}">${item.importance eq 1 ? "Personal" : "Work"}</option>
+		</select>
+		
+		<form action="todoUpdate" method= "get" id="todoslist">
+			<button name="upt_btn" value="${item}">update</button>
+		</form>
 		<form action="delete" method="get">
-			<button type="submit" name="del_btn" value="${item.todocode}">delete</button>
+			<button name="del_btn" value="${item.todocode}">delete</button>
 		</form>
 	</c:forEach>
 
