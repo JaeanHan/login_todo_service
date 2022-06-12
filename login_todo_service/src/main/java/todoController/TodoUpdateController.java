@@ -8,23 +8,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import entity.Todo;
+import repository.TodoDao;
+import repository.TodoDaoImpl;
 
 @WebServlet("/todoUpdate")
 public class TodoUpdateController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private TodoDao todoDao = new TodoDaoImpl();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("TodoUpdateController");
-		String todoStr = req.getParameter("upt_btn"); //이거 왜 object가 아니라 string으로 넘어오지
-		String newState = req.getParameter("new_state"); //왜 null?
-		String newImportance = req.getParameter("new_importance"); //왜 null?
-		
-		System.out.println("new: " + newState);
-		System.out.println("new: " + newImportance);
-		System.out.println(todoStr.getClass());
-		System.out.println(todoStr);
+		int todocode = Integer.parseInt(req.getParameter("upt_btn")); //item으로 받으면 toString() 결과가 넘어옴
+		int newImportance = Integer.parseInt(req.getParameter("newImportance"));
+		String newState = req.getParameter("newState");
+				
+		todoDao.updateTodobyBtn(todocode, newImportance, newState);
 		
 		resp.sendRedirect("/login_todo_service/sign-in");
 	}

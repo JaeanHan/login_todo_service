@@ -29,17 +29,17 @@ public class SignInController extends HttpServlet {
 		
 		if(session == null ) {
 			resp.sendRedirect("/login_todo_service/index"); // 로그인 안됐거나 세션 없어졌을 때
-			
-		} else { 
-			int usercode = ((User) session.getAttribute("user")).getUsercode();
-			
-			ArrayList<Todo> todos = new ArrayList<Todo>(); //이거를 로그인 처음 할 때 한번 가져와서
-			todos = todoDao.getTodosByUsercode(usercode); //로컬어딘가에 저장해놓고 가져오고 싶은데
-			
-			req.setAttribute("todos", todos); // request
-			req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp" ).forward(req, resp); 
-			
+			return;
 		}
+		
+		int usercode = ((User) session.getAttribute("user")).getUsercode();
+		
+		ArrayList<Todo> todos = new ArrayList<Todo>(); //이거를 로그인 처음 할 때 한번 가져와서
+		todos = todoDao.getTodosByUsercode(usercode); //로컬어딘가에 저장해놓고 가져오고 싶은데
+		
+		req.setAttribute("todos", todos); // request
+		req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp" ).forward(req, resp); 
+		
 	}
 	
 	@Override
@@ -48,17 +48,17 @@ public class SignInController extends HttpServlet {
 		String password = req.getParameter("password");
 		
 		User user = userDao.SignIn(username, password); // db에서 정보 확인하고 받아와서
-
+		
+		if(user == null) { //못받아왔으면
+			resp.sendRedirect("/login_todo_service/issue"); //issue
+			return;
+		}
+		
 		HttpSession session = req.getSession();
 		
-		if(user != null) { // 잘 받아왔으면
-			session.setMaxInactiveInterval(60 * 20);
-			session.setAttribute("user", user); // session에 저장
-			
-			resp.sendRedirect("/login_todo_service/sign-in"); // PRG
-			
-		} else {
-			resp.sendRedirect("/login_todo_service/index"); // 회원가입이 안됐을 경우 index로 보내기
-		}
+		session.setMaxInactiveInterval(60 * 20);
+		session.setAttribute("user", user); // session에 저장
+		
+		resp.sendRedirect("/login_todo_service/sign-in"); // PRG
 	}
 }

@@ -151,4 +151,30 @@ public class TodoDaoImpl implements TodoDao {
 		return result;
 	}
 
+	@Override
+	public int updateTodobyBtn(int todocode, int importance, String state) {
+		String sql = null;
+		Connection con = null;
+		PreparedStatement pstmt =null;
+		int result = 0;
+		
+		try {
+			con = pool.getConnection();
+			sql = "update todos set importance=?, state=? where todocode=?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, importance);
+			pstmt.setString(2, state);
+			pstmt.setInt(3, todocode);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt);
+		}
+		return result;
+	}
+
 }

@@ -6,12 +6,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Dashboard</title>
 <link rel="stylesheet" href="/login_todo_service/static/css/logged-in.css?ver=1">
 </head>
 <body>
 	<p>환영합니다 ${sessionScope.user.name}님!</p>
-	<p>hi this is english trial</p>
 	<p>change info?</p>
 	<form action="update" method="post">
 		<label for="name">name</label>
@@ -53,24 +52,23 @@
 	</form>
 	
 	<c:forEach var="item" items="${todos}">
-		<span>${item.todo}</span>
-		
-		<select name="newState" form="todoslist">
-			<option value="${item.state}">${item.state eq "doing"? "doing" : "done"} </option>
-			<option value="${item.state eq 'doing' ? 'done' : 'doing' }">${item.state eq "doing" ? "done" : "doing"}</option>
-		</select>
-		
-		<select name="newImportance" form="todoslist">
-			<option value="${item.importance}">${item.importance eq 1 ? "Work" : "Personal"}</option>
-			<option value="${item.importance eq 1 ? 0 : 1}">${item.importance eq 1 ? "Personal" : "Work"}</option>
-		</select>
-		
-		<form action="todoUpdate" method= "get" id="todoslist">
-			<button name="upt_btn" value="${item}">update</button>
-		</form>
-		<form action="delete" method="get">
-			<button name="del_btn" value="${item.todocode}">delete</button>
-		</form>
+		<div id="container" style="display:flex; width: 500px; background-color:white;">
+			<span>${item.todo}</span>
+			<form action="todoUpdate" method= "get">
+				<select name="newState" >
+					<option value="${item.state}" selected >${item.state eq "doing"? "doing" : "done"} </option>
+					<option value="${item.state eq 'doing' ? 'done' : 'doing' }">${item.state eq "doing" ? "done" : "doing"}</option>
+				</select>
+				<select name="newImportance" >
+					<option value="${item.importance}" selected >${item.importance eq 1 ? "Work" : "Personal"}</option>
+					<option value="${item.importance eq 1 ? 0 : 1}">${item.importance eq 1 ? "Personal" : "Work"}</option>
+				</select>
+				<button name="upt_btn" value="${item.todocode}">update</button>
+			</form>
+			<form action="delete" method="get">
+				<button name="del_btn" value="${item.todocode}">delete</button>
+			</form>
+		</div>
 	</c:forEach>
 
 <%--

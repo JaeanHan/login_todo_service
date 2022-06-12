@@ -41,7 +41,6 @@ public class SignUpController extends HttpServlet {
 		
 		if(!isValidPassword.isTrue(password)) {
 			resp.sendRedirect("/login_todo_service/issue");
-			System.out.println("why?");
 			return;
 		}
 		
@@ -54,8 +53,15 @@ public class SignUpController extends HttpServlet {
 				.build();
 		
 		int result = userDao.SignUp(user);
-		if(result == 1 ) {
+		
+		if(result == 1) {
 			resp.sendRedirect("/login_todo_service/index");
+			
+		} else {
+			req.setAttribute("username", username);
+			req.getRequestDispatcher("/issue").forward(req, resp);
+			
 		}
+
 	}
 }

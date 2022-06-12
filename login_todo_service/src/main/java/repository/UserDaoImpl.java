@@ -16,46 +16,57 @@ import respond.RespondDto;
 public class UserDaoImpl implements UserDao {
 	private DBConnectionMgr pool = DBConnectionMgr.getInstance();
 	
-//	@Override
-//	public int checkValidString(String string) {
-//		int result=1;
-//		
-//		if(string.contains("\'") || string.contains("\"") || string.contains("=")) {
-//			result=0;
-//		}
-//		return result;
-//	}
+	@Override
+	public int checkUsernameDuplicate(String username) throws DuplicateUsernameException {
+		String sql = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int result = 0;
+		
+		try {
+			con = pool.getConnection();
+			sql = "select count(username) from user where username=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, username);
+			rs = pstmt.executeQuery();
+			rs.next();
+			result = rs.getInt(1);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		if(result >0) {
+			throw new DuplicateUsernameException();
+		}
+		return result;
+	}
 	
 	@Override
 	public int SignUp(User user) {
 		StringBuilder sb = new StringBuilder();
 		Connection con = null;
 		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		int result = 0;
 		
 		try {
-			con = pool.getConnection();
-			sb.append("select count(username) from user where username=?");
-			pstmt = con.prepareStatement(sb.toString());
-			pstmt.setString(1, user.getUsername());
-			result = pstmt.executeUpdate();
+			result = checkUsernameDuplicate(user.getUsername());
 			
-			if(result > 0) { // if id duplicated
-				throw new DuplicateUsernameException();
-				
-			} else {
-				sb.setLength(0); // fastest
-				sb.append("insert into user values(0, ?, ?, ?, ?, ?, now(), now())");
-				
-				pstmt.close();
-				pstmt = con.prepareStatement(sb.toString());
-				pstmt.setString(1, user.getName());
-				pstmt.setString(2, user.getEmail());
-				pstmt.setString(3, user.getUsername());
-				pstmt.setString(4, user.getPassword());
-				pstmt.setString(5, user.getRole());				
-				result = pstmt.executeUpdate();
-			}
+			con = pool.getConnection();
+			sb.append("insert into user values(0, ?, ?, ?, ?, ?, now(), now())");
+			pstmt = con.prepareStatement(sb.toString());
+			
+			pstmt.setString(1, user.getName());
+			pstmt.setString(2, user.getEmail());
+			pstmt.setString(3, user.getUsername());
+			pstmt.setString(4, user.getPassword());
+			pstmt.setString(5, user.getRole());
+			
+			result = pstmt.executeUpdate();
+		
 		} catch (DuplicateUsernameException e) {
 			System.out.println("username already taken");
 			
@@ -63,7 +74,7 @@ public class UserDaoImpl implements UserDao {
 			e.printStackTrace();
 			
 		} finally {
-			pool.freeConnection(con, pstmt);
+			pool.freeConnection(con, pstmt, rs);
 			
 		}
 		return result;
@@ -224,7 +235,7 @@ public class UserDaoImpl implements UserDao {
 	public int resetPassword(String username, String email, String newPassword) {
 		String sql ="SELECT\n"
 				+ "	COUNT(username),\n"
-				+ "	COUNT(email),\n"
+				+ "	COUNT(email)\n"
 				+ "FROM user\n"
 				+ "	WHERE username=? AND email=?";
 		ResultSet rs = null;
@@ -234,7 +245,7 @@ public class UserDaoImpl implements UserDao {
 		try {
 			rs = (ResultSet) autoSQL(sql, username, email, 1).getResult();
 			rs.next();
-			selectResult = rs.getInt(1) + rs.getInt(2) + rs.getInt(3);
+			selectResult = rs.getInt(1) + rs.getInt(2);
 			rs.close();
 			
 		} catch (SQLException e) {
@@ -243,7 +254,7 @@ public class UserDaoImpl implements UserDao {
 			e.printStackTrace();
 		}
 		
-		if(selectResult == 3) {
+		if(selectResult == 2) {
 			updateResult=updatePassword(username, newPassword);
 		}
 		return updateResult;
@@ -259,7 +270,7 @@ public class UserDaoImpl implements UserDao {
 		int result = 0;
 		result = (int) autoSQL(sql, username, newPassword, 0).getResult();
 		
-		return 0;
+		return result;
 	}
 
 	//1 select mode
@@ -299,7 +310,8 @@ public class UserDaoImpl implements UserDao {
 			} else {
 				
 				if(usercode == 0) {
-					pstmt.setString(1, value);					
+					pstmt.setString(1, value);				
+					
 				} else {
 					pstmt.setInt(1, usercode);
 				}
@@ -311,14 +323,9 @@ public class UserDaoImpl implements UserDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if(mode==1) {
-				pool.freeConnection(con, pstmt, rs);				
-			} else {
-				pool.freeConnection(con, pstmt);
-			}
+			pool.freeConnection(con, pstmt);
 		}
 		
 		return mode==1? respond : respond2;
 	}
-
 }
