@@ -20,12 +20,13 @@ import repository.UserDaoImpl;
 @WebServlet("/sign-in")
 public class SignInController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private UserDao userDao = new UserDaoImpl();
+	private UserDao userDao;
 	private TodoDao todoDao = new TodoDaoImpl();
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession(false);
+		userDao = new UserDaoImpl();
 		
 		if(session == null ) {
 			resp.sendRedirect("/login_todo_service/index"); // 로그인 안됐거나 세션 없어졌을 때
@@ -46,11 +47,11 @@ public class SignInController extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
+		userDao = new UserDaoImpl(req, resp);
 		
 		User user = userDao.SignIn(username, password); // db에서 정보 확인하고 받아와서
 		
-		if(user == null) { //못받아왔으면
-			resp.sendRedirect("/login_todo_service/issue"); //issue
+		if(user==null) {
 			return;
 		}
 		

@@ -18,10 +18,12 @@ import repository.UserDaoImpl;
 @WebServlet("/sign-up")
 public class SignUpController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private UserDao userDao = new UserDaoImpl();
+	private UserDao userDao;
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		userDao = new UserDaoImpl(req, resp);
+		
 		String name = "friend"; // 임시로 부여
 		String email = req.getParameter("email");
 		String username = req.getParameter("username");
@@ -40,7 +42,9 @@ public class SignUpController extends HttpServlet {
 		};
 		
 		if(!isValidPassword.isTrue(password)) {
-			resp.sendRedirect("/login_todo_service/issue");
+			req.setAttribute("reason", "password is in invalid form!");
+			req.getRequestDispatcher("/issue").forward(req, resp);
+			req.removeAttribute("reason");
 			return;
 		}
 		
@@ -54,14 +58,11 @@ public class SignUpController extends HttpServlet {
 		
 		int result = userDao.SignUp(user);
 		
-		if(result == 1) {
-			resp.sendRedirect("/login_todo_service/index");
-			
-		} else {
-			req.setAttribute("username", username);
-			req.getRequestDispatcher("/issue").forward(req, resp);
-			
+		if(result == 0) {
+			return;
 		}
+		
+		resp.sendRedirect("/login_todo_service/index");
 
 	}
 }

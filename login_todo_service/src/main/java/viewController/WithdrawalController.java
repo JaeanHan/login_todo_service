@@ -27,7 +27,7 @@ public class WithdrawalController extends HttpServlet {
 		result = userDao.deleteUserByUsername((User)session.getAttribute("user"));
 		
 		if(result == 1) {
-			session.invalidate(); // 세션 정보 다 지우고
+			session.invalidate();
 			resp.sendRedirect("/login_todo_service/index"); //삭제됐다면 index로 보내기
 		} else {
 			req.getRequestDispatcher("/WEB-INF/views/logged-in.jsp").forward(req, resp);

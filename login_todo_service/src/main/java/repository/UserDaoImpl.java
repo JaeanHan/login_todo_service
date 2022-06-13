@@ -6,15 +6,30 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import db.DBConnectionMgr;
 import entity.User;
 import exception.DuplicateUsernameException;
 import exception.PasswordMismatchException;
 import exception.UserNotFoundException;
-import respond.RespondDto;
+import request.AutoSQLRequestDto;
+import respond.AutoSQLRespondDto;
 
 public class UserDaoImpl implements UserDao {
-	private DBConnectionMgr pool = DBConnectionMgr.getInstance();
+	private final DBConnectionMgr pool = DBConnectionMgr.getInstance();
+	private HttpServletRequest req;
+	private HttpServletResponse resp;
+	
+	public UserDaoImpl() {
+	
+	}
+	
+	public UserDaoImpl(HttpServletRequest req, HttpServletResponse resp) {
+		this.req = req;
+		this.resp = resp;
+	}
 	
 	@Override
 	public int checkUsernameDuplicate(String username) throws DuplicateUsernameException {
@@ -35,9 +50,11 @@ public class UserDaoImpl implements UserDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			
 		} finally {
 			pool.freeConnection(con, pstmt, rs);
 		}
+		
 		if(result >0) {
 			throw new DuplicateUsernameException();
 		}
@@ -67,15 +84,20 @@ public class UserDaoImpl implements UserDao {
 			
 			result = pstmt.executeUpdate();
 		
-		} catch (DuplicateUsernameException e) {
-			System.out.println("username already taken");
+		} catch (DuplicateUsernameException e) {			
+				try {
+					req.setAttribute("reason", "sorry but username " + user.getUsername() + " is already taken!");
+					req.getRequestDispatcher("/issue").forward(req, resp);
+					req.removeAttribute("reason");
+					
+				} catch (Exception e1) {
+					System.out.println("sign up says hi");
+				}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			
 		} finally {
 			pool.freeConnection(con, pstmt, rs);
-			
 		}
 		return result;
 	}
@@ -91,10 +113,8 @@ public class UserDaoImpl implements UserDao {
 		try {
 			con = pool.getConnection();
 			sb.append("select * from user where username=?");
-			
 			pstmt = con.prepareStatement(sb.toString());
 			pstmt.setString(1, username);
-			
 			rs = pstmt.executeQuery();
 			rs.next();
 			
@@ -113,10 +133,8 @@ public class UserDaoImpl implements UserDao {
 			System.out.println("error in UDI");
 		} catch (Exception e) {
 			e.printStackTrace();
-			
 		} finally {
 			pool.freeConnection(con, pstmt, rs);
-			
 		}
 		return user;
 	}
@@ -126,42 +144,61 @@ public class UserDaoImpl implements UserDao {
 		StringBuilder sb = new StringBuilder();
 		Connection con = null;
 		PreparedStatement pstmt = null;
-		String result = null;
 		ResultSet rs = null;
 		User user = null;
+		int result = 0;
 		
 		try {
 			con = pool.getConnection();
-			sb.append("select password from user where username=?");
+			sb.append("SELECT\n"
+					+ "	COUNT(username),\n"
+					+ "	case when PASSWORD = ? then 1 ELSE 0\n"
+					+ "	END AS pwd\n"
+					+ "FROM user\n"
+					+ "WHERE username=?");
 			pstmt = con.prepareStatement(sb.toString());
-			pstmt.setString(1, username);
+			pstmt.setString(1, password);
+			pstmt.setString(2, username);
 			rs = pstmt.executeQuery();
+			rs.next();
 			
-			if(rs == null) {
+			result = rs.getInt(1) + rs.getInt(2);
+			
+			if(result == 0) {
 				throw new UserNotFoundException();
 			}
 			
-			rs.next();
-			result = rs.getString(1);
-			
-			if(result.equals(password)) {
-				user = getUserByUsername(username);				
-			} else {
+			if(result == 1) {
 				throw new PasswordMismatchException();
 			}
 			
+			user = getUserByUsername(username); //private?
+			
 		} catch (SQLException e) {
-			System.out.println("wow");
+			System.out.println("what happened?");
 			
 		} catch (UserNotFoundException e) {
-			System.out.println("user not found");
+			try {
+				req.setAttribute("reason", "your username is not found create new account!");
+				req.getRequestDispatcher("/issue").forward(req, resp);
+				req.removeAttribute("reason");
+			} catch (Exception e1) {
+				System.out.println("signin says hi");
+			}
 			
 		} catch (PasswordMismatchException e) {
 			System.out.println("password no match");
 			
+			try {
+				req.setAttribute("reason", "your password is incorrect!");
+				req.getRequestDispatcher("/issue").forward(req, resp);
+				req.removeAttribute("reason");
+			} catch (Exception e1) {
+				System.out.println("signin says hello");
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-			
 		} finally {
 			pool.freeConnection(con, pstmt, rs);
 		}
@@ -180,17 +217,17 @@ public class UserDaoImpl implements UserDao {
 				
 		sb.append("update user set");
 		
-			if(!newUser.getName().equals(existingUser.getName())) {
-				sb.append(" name = " + "\"" + newUser.getName() + "\",");	
-			}
-			
-			if(!newUser.getEmail().equals(existingUser.getEmail())) {
-				sb.append(" email = " + "\""+ newUser.getEmail() + "\",");
-			}
-			
-			if(!newUser.getPassword().equals(existingUser.getPassword())) {
-				sb.append(" password = " + "\"" + newUser.getPassword() + "\",");
-			}
+		if(!newUser.getName().equals(existingUser.getName())) {
+			sb.append(" name = " + "\"" + newUser.getName() + "\",");	
+		}
+		
+		if(!newUser.getEmail().equals(existingUser.getEmail())) {
+			sb.append(" email = " + "\""+ newUser.getEmail() + "\",");
+		}
+		
+		if(!newUser.getPassword().equals(existingUser.getPassword())) {
+			sb.append(" password = " + "\"" + newUser.getPassword() + "\",");
+		}
 		
 		sb.append(" update_date = now() where username = ?");
 		
@@ -202,12 +239,9 @@ public class UserDaoImpl implements UserDao {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			
 		} finally {
-			pool.freeConnection(con, pstmt);
-			
+			pool.freeConnection(con, pstmt);	
 		}
-		
 		return result;
 	}
 
@@ -215,11 +249,14 @@ public class UserDaoImpl implements UserDao {
 	public int deleteUserByUsername(User user) {
 		String sql = "delete from user where usercode=? and username=?";
 		int result = 0;
-		result = (int) 
-				autoSQL(sql, user.getUsername(), 
-						Integer.toString(user.getUsercode()), 
-						0).getResult();
-
+		AutoSQLRequestDto req = AutoSQLRequestDto.builder()
+									.sql(sql)
+									.username(user.getUsername())
+									.usercode(user.getUsercode())
+									.mode(0)
+									.build();
+			
+		result = (int) autoSQL(req).getResult();
 		return result;
 	}
 
@@ -241,9 +278,17 @@ public class UserDaoImpl implements UserDao {
 		ResultSet rs = null;
 		int selectResult=0;
 		int updateResult=0;
-		
+		AutoSQLRequestDto req = AutoSQLRequestDto.builder()
+									.sql(sql)
+									.username(username)
+									.email(email)
+									.newPassword(newPassword)
+									.usercode(-1)
+									.mode(1)
+									.build();
+						
 		try {
-			rs = (ResultSet) autoSQL(sql, username, email, 1).getResult();
+			rs = (ResultSet) autoSQL(req).getResult();
 			rs.next();
 			selectResult = rs.getInt(1) + rs.getInt(2);
 			rs.close();
@@ -268,64 +313,55 @@ public class UserDaoImpl implements UserDao {
 				+ "WHERE\n"
 				+ "	username=?";
 		int result = 0;
-		result = (int) autoSQL(sql, username, newPassword, 0).getResult();
-		
+		AutoSQLRequestDto req = AutoSQLRequestDto.builder()
+									.username(username)
+									.newPassword(newPassword)
+									.sql(sql)
+									.mode(0)
+									.usercode(-1)
+									.build();
+				
+		result = (int) autoSQL(req).getResult();
 		return result;
 	}
 
 	//1 select mode
 	//0 insert, update, delete mode
-	private RespondDto<?> autoSQL(String sql, String username, String value, int mode) {
+	private AutoSQLRespondDto<?> autoSQL(AutoSQLRequestDto req) {
+		AutoSQLRespondDto<ResultSet> respond = null;
+		AutoSQLRespondDto<Integer> respond2 = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		int result = 0;
-		int usercode = 0;
-		RespondDto<ResultSet> respond = null;
-		RespondDto<Integer> respond2 = null;
-		
-		Lambda isNumeric = (check) -> {
-			Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?"); // "^[0-9]*$"
-			
-			if (check == null) {
-		        return false; 
-		    }
-		    return pattern.matcher(check).matches();
-		};
-		
-		if(isNumeric.isTrue(value)) {
-			usercode = Integer.parseInt(value);
-		}
-		
+		int usercode = req.getUsercode();
+				
 		try {
 			con=pool.getConnection();
-			pstmt=con.prepareStatement(sql);
+			pstmt=con.prepareStatement(req.getSql());
 			
-			if(mode==1) {
-				pstmt.setString(1, username);
-				pstmt.setString(2, value);
+			if(req.getMode()==1) {
+				pstmt.setString(1, req.getUsername());
+				pstmt.setString(2, req.getEmail());
 				rs = pstmt.executeQuery();
-				respond = new RespondDto<ResultSet>(rs);
+				respond = new AutoSQLRespondDto<ResultSet>(rs);
 				
 			} else {
-				
-				if(usercode == 0) {
-					pstmt.setString(1, value);				
-					
+				if(usercode == -1) {
+					pstmt.setString(1, req.getNewPassword());
 				} else {
 					pstmt.setInt(1, usercode);
 				}
 				
-				pstmt.setString(2, username);
+				pstmt.setString(2, req.getUsername());
 				result = pstmt.executeUpdate();
-				respond2 = new RespondDto<Integer>(result);
+				respond2 = new AutoSQLRespondDto<Integer>(result);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			pool.freeConnection(con, pstmt);
 		}
-		
-		return mode==1? respond : respond2;
+		return req.getMode()==1 ? respond : respond2;
 	}
 }

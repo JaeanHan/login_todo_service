@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class RespondDto<T> {
+public class AutoSQLRespondDto<T> {
 	private T result;
 }
