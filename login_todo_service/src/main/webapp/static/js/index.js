@@ -16,8 +16,7 @@ const pannel = document.getElementById("pannel");
       pannel.classList.remove("moveControl");
       signup.classList.remove("toLeft");
       signin.classList.add("toRight");
-      pannel.style.background =
-        "linear-gradient(to right, deeppink 50%, hotpink 50%)";
+      pannel.style.backgroundImage = `url("static/img/Shopping.png")`;
       pannel.value = "1";
     } else {
       header.innerHTML = "Hello, Friend!";
@@ -27,8 +26,7 @@ const pannel = document.getElementById("pannel");
       pannel.classList.add("moveControl");
       signin.classList.remove("toRight");
       signup.classList.add("toLeft");
-      pannel.style.background =
-        "linear-gradient(to left, deeppink 50%, hotpink 50%)";
+      pannel.style.backgroundImage = `url("static/img/ProductLaunch.png")`;
       pannel.value = "0";
     }
   }
