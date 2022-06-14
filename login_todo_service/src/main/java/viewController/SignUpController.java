@@ -24,7 +24,7 @@ public class SignUpController extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		userDao = new UserDaoImpl(req, resp);
 		
-		String name = "friend"; // 임시로 부여
+		String name = req.getParameter("name");
 		String email = req.getParameter("email");
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
