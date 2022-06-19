@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome</title>
-    <link rel="stylesheet" href="/login_todo_service/static/css/index.css?ver=1">
+    <link rel="stylesheet" href="/login_todo_service/static/css/index.css?ver=2">
   </head>
   <body>
     <body>

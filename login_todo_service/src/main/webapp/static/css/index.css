@@ -110,10 +110,12 @@ body {
   color: white;
   font-size: 1.2rem;
   transition: 0.5s;
+  cursor:pointer;
 }
 
 .signin-container .submit {
   margin-bottom: 5%;
+  cursor:pointer;
 }
 
 .submit:hover {
@@ -199,6 +201,7 @@ body {
   font-size: 1.2rem;
   position: absolute;
   bottom: 100px;
+  cursor:pointer;
 }
 
 .moveControl {
