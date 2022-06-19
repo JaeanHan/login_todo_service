@@ -1,9 +1,611 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+}
+
+button {
+	cursor:pointer;
+}
 
 body {
-    width: 100vw;
-    height: 100vh;
-    font-family: 'Nunito', sans-serif;
-    background-color: #ccc;
-    font-size: 1vw;
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+  overflow-x: hidden;
+  font-family: "Nunito", sans-serif;
+  font-size: 16px;
 }
+
+header {
+  width: 100%;
+  height: 45px;
+  display: flex;
+  background-color: #412475;
+  position: relative;
+  justify-content: space-between;
+  padding: 0px 45px;
+  align-items: center;
+}
+
+header .header_left {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+header .header_left button,
+header .header_right button {
+  width: 30px;
+  height: 30px;
+  font-size:20px;
+  border:none;
+  background:none;
+  color:white;
+  transition: 0.5s;
+}
+
+header .header_left button:hover,
+header .header_right button:hover {
+  transform:scale(1.5, 1.5);
+}
+
+header .header_left .name {
+  background-color: transparent;
+  color: white;
+  height: 30px;
+  line-height: 30px;
+  padding: 0px 5px;
+}
+
+header > ul {
+  display: flex;
+}
+
+header .header_right {
+	display:flex;
+	height: 100%;
+	align-items:center;
+}
+
+header .header_right .loggedin_username {
+	background-color:transparent;
+	color:white;
+	height:30px;
+	line-height: 30px;
+    padding: 0px 5px;
+}
+
+header .changeInfo {
+  width: 50%;
+  height: 0px;
+  /* height: 700px; */
+  background-color: white;
+  /* border: 3px solid black; */
+  position: absolute;
+  right: 10px;
+  top: 40px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  transition: 0.5s;
+  z-index: 10;
+}
+
+.changeInfo .title {
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+  text-align: center;
+}
+
+.changeInfo .contents {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  /* border-radius: 15px; */
+  border-bottom: 3px solid black;
+}
+
+.changeInfo .contents .navigation {
+  height: 100%;
+  width: 170px;
+  background-color: whitesmoke;
+  box-sizing: border-box;
+}
+
+.navigation * {
+  margin: 8px 0px;
+  padding: 0px 5px;
+}
+
+.navigation ul li label {
+  font-size: 16px;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.navigation ul li label:hover {
+  color: black;
+  opacity: 0.8;
+}
+
+.navigation ul li label i {
+  font-size: 16px;
+  color: black;
+  opacity: 0.8;
+}
+
+.navigation ul .space_usage {
+  width: 100%;
+  height: 50px;
+  border-bottom: 1px solid #ccc;
+  margin: none;
+}
+
+.navigation ul form button {
+  border: none;
+  font-size: 16px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.changeInfo__profile {
+  height: 100%;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: center;
+  background-image: url("../img/Service.png");
+  background-repeat: no-repeat;
+  background-position: right;
+  background-size: contain;
+  position: relative;
+}
+
+.changeInfo__profile * {
+  margin-left: 20px;
+}
+
+.changeInfo__profile h1 {
+  position: absolute;
+  top: 30px;
+  background: linear-gradient(to right, white 40%, transparent 60%);
+  border-bottom: 3px solid black;
+}
+
+.changeInfo__profile__name,
+.changeInfo__profile__email,
+.changeInfo__profile__password {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  height: 100px;
+  /* border: 2px solid #412475; */
+  border-radius: 15px;
+  margin-bottom: 20px;
+  background: linear-gradient(to right, white 25%, transparent 75%);
+  transition: 0.5s;
+}
+
+.changeInfo__profile__name label,
+.changeInfo__profile__email label,
+.changeInfo__profile__password label {
+  color: #667eea;
+  transition: 0.5s;
+}
+
+.changeInfo__profile__name input,
+.changeInfo__profile__email input,
+.changeInfo__profile__password input {
+  width: 90%;
+  background-color: transparent;
+  border-radius: 5px;
+  border: 2px solid #667eea;
+  padding: 0 3px;
+  box-sizing: border-box;
+}
+
+.changeInfo__profile__name input:focus,
+.changeInfo__profile__email input:focus,
+.changeInfo__profile__password input:focus {
+  outline: none;
+  border: 3px solid #764ba2;
+}
+
+.changeInfo__profile__name p,
+.changeInfo__profile__email p,
+.changeInfo__profile__password p {
+  /* color: #ccc; */
+  font-size: 12px;
+}
+
+.changeInfo__profile__name:hover,
+.changeInfo__profile__email:hover,
+.changeInfo__profile__password:hover {
+  border: 5px solid transparent;
+  width: 70%;
+  border-radius: 20px;
+  background-image: linear-gradient(white, whitesmoke),
+    linear-gradient(to right, #667eea 0%, #764ba2 100%);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+
+.changeInfo__profile__name:hover .change__profile__name p,
+.changeInfo__profile__email:hover .change__profile__email p,
+.changeInfo__profile__password:hover .change__profile__password p {
+  font-size: 16px;
+}
+
+.changeInfo__profile__name:hover > input,
+.changeInfo__profile__email:hover > input,
+.changeInfo__profile__password:hover > input {
+  border: 3px solid #667eea;
+}
+
+.changeInfo__profile__name:hover > input:focus,
+.changeInfo__profile__email:hover > input:focus,
+.changeInfo__profile__password:hover > input:focus {
+  border: 3px solid #764ba2;
+}
+
+.changeInfo__profile__name:hover > label,
+.changeInfo__profile__email:hover > label,
+.changeInfo__profile__password:hover > label {
+  transform: translateY(-30px);
+  font-size: 20px;
+  font-weight: 700;
+  position: relative;
+}
+
+.changeInfo__profile__name:hover > label::before,
+.changeInfo__profile__email:hover > label::before,
+.changeInfo__profile__password:hover > label::before {
+  font-family: FontAwesome;
+  content: "\f061";
+  display: block;
+  width: 20px;
+  height: 20px;
+  color: #667eea;
+  /* background-color: #667eea; */
+  position: absolute;
+  top: 5px;
+  left: -25px;
+  transition: 0.5s;
+  animation: arrow 1s infinite;
+}
+
+.changeInfo__profile__name:hover > label::after {
+  content: "name";
+  animation: shadow 0.5s;
+}
+.changeInfo__profile__email:hover > label::after {
+  content: "email";
+  animation: shadow 0.5s;
+}
+.changeInfo__profile__password:hover > label::after {
+  content: "password";
+  animation: shadow 0.5s;
+}
+
+@keyframes shadow {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.changeInfo__profile__name:hover > label::after,
+.changeInfo__profile__email:hover > label::after,
+.changeInfo__profile__password:hover > label::after {
+  display: block;
+  color: #ccc;
+  font-size: 16px;
+  position: absolute;
+  font-weight: 600;
+  top: 35px;
+}
+
+@keyframes arrow {
+  0%,
+  100% {
+    transform: translateX(-10px);
+  }
+  50% {
+    transform: translateX(0px);
+  }
+}
+
+.changeInfo__profile button {
+  width: 150px;
+  height: 50px;
+  text-align: center;
+  background-color: hotpink;
+  color: white;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  margin-left: 25%;
+}
+
+.changeInfo__profile button:hover {
+  background-color: deeppink;
+}
+
+main {
+  display: flex;
+}
+main .tab {
+  width: 305px;
+  height: 800px;
+  background-color: #f3f5f7;
+  display: flex;
+  flex-direction: column;
+  transition: 0.5s;
+  align-items: flex-start;
+  overflow:hidden;
+  padding-left: 45px;
+}
+
+main .tab p {
+	margin-top: 10px;
+}
+
+main .tab button {
+  width: 150px;
+  height: 30px;
+  font-size:20px;
+  margin-top:20px;
+  border:none;
+  background:none;
+  color:#ccc;
+  display:flex;
+  justify-items: flex-start;
+  transition:0.3s;
+}
+
+main .tab button:hover {
+	color:black;
+}
+
+main .tab button i {
+	margin-right: 5px;
+}
+
+main .todos__btn {
+  width: 150px;
+  height: 50px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: black;
+  position: relative;
+}
+
+main .tab .btn_area {
+	width: 100%;
+	display:flex;
+	justify-content: flex-start;
+}
+
+main .tab .btn_area:hover .todos__btn {
+	color:black;
+}
+
+main .tab .btn_area:hover .todos__btn::after {
+	content:"";
+	color:green;
+	display:block;
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	border: 2px solid green;
+	border-radius: 50%;
+	top:-7px;
+	left:-9px;
+	animation: circular 0.5s;
+}
+
+@keyframes circular {
+	0%{
+	width:0px;
+	height:0px;
+	}
+	100% {
+	width: 30px;
+	height: 30px;}
+}
+
+main .tab .btn_area .todos__btn:hover {
+	color:#412475;
+}
+
+main .todos {
+  display: flex;
+  width: 100%;
+  height: 800px;
+  flex-direction: column;
+  background-image: url("../img/Designer.png"), url("../img/Presentation.png");
+  background-repeat: no-repeat;
+  background-size: 50%, 40%;
+  background-position: 50% 80%, 0% 70%;
+  align-items: center;
+  position: relative;
+}
+
+main .todos__manage {
+  width: 400px;
+  height: 800px;
+  transition: 0.5s;
+  background-color:#f3f5f7;
+  padding: 30px 0px 30px 45px;
+  width: 0px;
+}
+
+main .todos__manage .todo_form {
+	width: 100%;
+	height: 50%;
+	display:flex;
+	flex-direction: column;
+	padding-right: 20px;
+	box-sizing:border-box;
+}
+
+main .todos__manage .todo_form .add_label {
+	display:block;
+	width: 100%;
+	height: 30px;
+	font-size:30px;
+	line-height: 30px;
+	margin-bottom: 15px;
+}
+
+main .todos__manage .todo_form .todo_input {
+	width: 100%;
+	height: 40px;
+	font-size: 18px;
+	margin-bottom: 15px;
+	border-top-right-radius: 10px;
+	border-top-left-radius: 5px;
+  	border-bottom-right-radius: 10px;
+  	border-bottom-left-radius: 5px;
+  	padding-left:5px;
+}
+
+main .todos__manage .todo_form div {
+	margin-bottom: 15px;
+}
+
+main .todos__manage .todo_form .todo_form_submits {
+	display:flex;
+	width: 100%;
+	justify-content:space-between;
+}
+
+main .todos__manage .todo_form .todo_form_submits .td_add_btn,
+main .todos__manage .todo_form .todo_form_submits .td_upt_btn {
+	width: 40%;
+	font-size:20px;
+	border-radius: 10px;
+	border: 2px solid black;
+}
+
+	
+
+.todo_container {
+  display: flex;
+  width: 700px;
+  height: 45px;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing:content-box;
+  
+  padding: 0 10px;
+  border-radius: 5px;
+  background: linear-gradient(to right, white 0%, transparent 100%);
+  font-size: 20px;
+  box-shadow: 0 0 0 10px #f3f5f7;
+  margin-top: 10px;
+}
+
+.todo_container:hover {
+	background-color:white;
+}
+
+.todo_container:hover > .visibility {
+	background-color: deeppink;
+}
+
+.todo_container:hover > .visibility .circle {
+	transform:translateX(45px);
+}
+
+.todo_container .visibility {
+	display:flex;
+	align-items:center;
+	border:2px solid #412475;
+	background-color: hotpink;
+	height: 90%;
+	width: 12%;
+	border-radius: 20px;
+	transition: 0.5s;
+}
+
+.todo_container .visibility .circle {
+	background-color:white;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	border: 2px solid #412475;
+	transform: translateX(10px);
+	transition:0.5s;
+}
+
+.todo_container span {
+	line-height: 45px;
+}
+
+.todo_container_settings {
+  width: 60%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.todo_container_settings .date {
+	color: #ccc;
+}
+
+.todo_container_settings .date:hover {
+	color: black;
+}
+
+.todo_container_settings form {
+	display:flex;
+	align-items:center;
+}
+
+.todo_container_settings form select {
+  height: 100%;
+  padding: 6px 0px;
+  box-sizing: content-box;
+  border-radius:5px;
+  margin-left:5px;
+  font-size:20px;
+}
+
+.todo_container_settings form select option {
+	color:black;
+}
+
+.todo_container_settings form button {
+	height: 30px;
+	width: 30px;
+	font-size: 30px;
+	margin-left:5px;
+	border:none;
+	background:none;
+	color:#ccc;
+	margin-left: 5px;
+	transition: 0.5s;
+}
+
+.todo_container_settings form:hover button {
+	transform:translateY(-10px);
+	color:black;
+	height:35px;
+	width: 35px;
+	border:2px solid green;
+	border-radius: 50%;
+}
+

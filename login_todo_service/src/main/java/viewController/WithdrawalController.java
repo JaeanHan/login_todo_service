@@ -1,6 +1,7 @@
 package viewController;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,6 +24,10 @@ public class WithdrawalController extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
 		int result=0;
+		
+		PrintWriter out = resp.getWriter();
+		
+		out.println("<script>confirm('for real?')</script>");
 		
 		result = userDao.deleteUserByUsername((User)session.getAttribute("user"));
 		

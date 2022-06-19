@@ -22,6 +22,10 @@ public class TodoUpdateController extends HttpServlet {
 		int newImportance = Integer.parseInt(req.getParameter("newImportance"));
 		String newState = req.getParameter("newState");
 				
+		System.out.println(todocode);
+		System.out.println(newImportance);
+		System.out.println(newState);
+		
 		todoDao.updateTodobyBtn(todocode, newImportance, newState);
 		
 		resp.sendRedirect("/login_todo_service/sign-in");

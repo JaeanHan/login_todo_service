@@ -27,7 +27,6 @@ public class SignInController extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession(false);
 		userDao = new UserDaoImpl();
-		
 		if(session == null ) {
 			resp.sendRedirect("/login_todo_service/index"); // 로그인 안됐거나 세션 없어졌을 때
 			return;

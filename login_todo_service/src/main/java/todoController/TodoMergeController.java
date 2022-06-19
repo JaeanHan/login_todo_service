@@ -17,6 +17,7 @@ import repository.TodoDaoImpl;
 
 @WebServlet("/merge")
 public class TodoMergeController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	private TodoDao todoDao = new TodoDaoImpl();
 	
 	@Override

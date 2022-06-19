@@ -19,7 +19,7 @@
           <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <span class="sspan">or use your account</span>
-        <form class="form-container">
+        <form class="form-container" action="sign-in" method="post">
           <input
             type="text"
             required
@@ -50,7 +50,7 @@
           <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
         </div>
         <span class="sspan">or use your email for registeration</span>
-        <form class="form-container">
+        <form class="form-container" action="sign-up" method="post">
           <input
             type="text"
             required
@@ -88,7 +88,7 @@
         <!-- <form> -->
         <!-- </form> -->
       </div>
-      <div id="pannel" class="moveControl" value="1">
+      <div id="pannel" class="moveControl">
         <h2>Hello, Friend!</h2>
         <p>Enter your personal details and start<br />journey with us!<br /></p>
         <button>SIGN UP</button>
