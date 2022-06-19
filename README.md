@@ -8,6 +8,14 @@ images source : [https://ls.graphics/illustrations](https://ls.graphics/illustra
 
 ![indexView](https://user-images.githubusercontent.com/65104605/173661821-53eb4596-fc4f-4c43-bb2e-48d7f443d99b.gif)
 
+## logged-in View
+
+![logged-in view 0](https://user-images.githubusercontent.com/65104605/174486021-d978082f-91f6-4a5d-b40c-9c33c70d6e93.gif)
+
+![logged-in view 1](https://user-images.githubusercontent.com/65104605/174486031-27330bc8-cb0c-4026-b282-51bf51862e81.gif)
+
+![logged-in view 2](https://user-images.githubusercontent.com/65104605/174486040-cc4c7e62-7438-475a-9436-69c136ef4040.gif)
+
 # DB
 
 ## user table
