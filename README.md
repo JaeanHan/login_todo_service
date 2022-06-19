@@ -16,6 +16,8 @@ images source : [https://ls.graphics/illustrations](https://ls.graphics/illustra
 
 ![logged-in view 2](https://user-images.githubusercontent.com/65104605/174486040-cc4c7e62-7438-475a-9436-69c136ef4040.gif)
 
+![logged-in view 3](https://user-images.githubusercontent.com/65104605/174486652-1537d45a-6119-4704-b903-679e9adbcc3a.gif)
+
 # DB
 
 ## user table
