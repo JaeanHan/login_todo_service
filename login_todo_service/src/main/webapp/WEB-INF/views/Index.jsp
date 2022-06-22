@@ -36,7 +36,7 @@
             name="password"
             autocomplete="off"
           />
-          <a href="" class="help">Forgot password?</a>
+          <a href="forgot-password"  class="help">Forgot password?</a>
           <input type="submit" value="SIGN IN" class="submit" />
         </form>
         <!-- <form> -->
